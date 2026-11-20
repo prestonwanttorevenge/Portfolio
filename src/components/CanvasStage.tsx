@@ -66,7 +66,7 @@ function renderCodeTokens(text: string): React.ReactNode[] {
 }
 
 const ElRect = React.memo(
-  ({ el }: { el: RectEl; v: number }) => {
+  ({ el, onOpenContact }: { el: RectEl; v: number; onOpenContact?: () => void }) => {
     if (!el.vis) return null;
     const w = el.draw?.w ?? el.w;
     const h = el.draw?.h ?? el.h;
@@ -83,6 +83,7 @@ const ElRect = React.memo(
     };
 
     if (el.href && el.styled) {
+      const isContactModal = el.href === '#contact-form';
       return (
         <a
           className="el-rect el-link"
@@ -91,6 +92,14 @@ const ElRect = React.memo(
           target={el.external ? '_blank' : undefined}
           rel={el.external ? 'noreferrer' : undefined}
           aria-label={el.id}
+          onClick={
+            isContactModal
+              ? (e) => {
+                  e.preventDefault();
+                  onOpenContact?.();
+                }
+              : undefined
+          }
         />
       );
     }
@@ -173,7 +182,7 @@ const ElPath = React.memo(
 );
 
 const ElText = React.memo(
-  ({ el }: { el: TextEl; v: number }) => {
+  ({ el, onOpenContact }: { el: TextEl; v: number; onOpenContact?: () => void }) => {
     if (!el.vis) return null;
     const st = el.st;
     const content = el.selAll ? (
@@ -208,6 +217,7 @@ const ElText = React.memo(
     );
 
     if (el.href && !el.editing) {
+      const isContactModal = el.href === '#contact-form';
       return (
         <a
           className="el-text el-link"
@@ -215,6 +225,14 @@ const ElText = React.memo(
           href={el.href}
           target={el.external ? '_blank' : undefined}
           rel={el.external ? 'noreferrer' : undefined}
+          onClick={
+            isContactModal
+              ? (e) => {
+                  e.preventDefault();
+                  onOpenContact?.();
+                }
+              : undefined
+          }
         >
           {inner}
         </a>
@@ -230,11 +248,21 @@ const ElText = React.memo(
   (a, b) => a.v === b.v
 );
 
-function SceneElements({ els, height }: { els: SceneEl[]; height: number }) {
+function SceneElements({
+  els,
+  height,
+  onOpenContact,
+}: {
+  els: SceneEl[];
+  height: number;
+  onOpenContact?: () => void;
+}) {
   return (
     <>
       {els.map((el) =>
-        el.kind === 'rect' ? <ElRect key={el.id} el={el} v={el.v} /> : null
+        el.kind === 'rect' ? (
+          <ElRect key={el.id} el={el} v={el.v} onOpenContact={onOpenContact} />
+        ) : null
       )}
       <svg className="paths" width={CANVAS_W} height={height}>
         {els.map((el) =>
@@ -242,13 +270,18 @@ function SceneElements({ els, height }: { els: SceneEl[]; height: number }) {
         )}
       </svg>
       {els.map((el) =>
-        el.kind === 'text' ? <ElText key={el.id} el={el} v={el.v} /> : null
+        el.kind === 'text' ? (
+          <ElText key={el.id} el={el} v={el.v} onOpenContact={onOpenContact} />
+        ) : null
       )}
     </>
   );
 }
 
-export const CanvasStage: React.FC<{ engine: SwarmEngine }> = ({ engine }) => {
+export const CanvasStage: React.FC<{
+  engine: SwarmEngine;
+  onOpenContact?: () => void;
+}> = ({ engine, onOpenContact }) => {
   const { s, left } = engine.vp;
   const stickyEls = engine.list.filter((el) => el.sticky);
   const bodyEls = engine.list.filter((el) => !el.sticky);
@@ -296,7 +329,7 @@ export const CanvasStage: React.FC<{ engine: SwarmEngine }> = ({ engine }) => {
           transform: `translateX(${left}px) scale(${s})`,
         }}
       >
-        <SceneElements els={bodyEls} height={engine.height} />
+        <SceneElements els={bodyEls} height={engine.height} onOpenContact={onOpenContact} />
       </div>
 
       {/* Intro Centered Emblem (fades out once touched or scrolled) */}

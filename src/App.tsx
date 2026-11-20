@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { CanvasStage } from './components/CanvasStage';
+import { ContactModal } from './components/ContactModal';
 import { CornerControls } from './components/CornerControls';
 import { renderSwarmOverlay } from './engine/overlayRenderer';
 import { soundEngine } from './engine/sound';
@@ -10,6 +11,7 @@ export function App() {
   const [engine, setEngine] = useState<SwarmEngine | null>(null);
   const [, setDomTick] = useState(0);
   const [soundEnabled, setSoundEnabled] = useState(false);
+  const [contactOpen, setContactOpen] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   const createEngine = useCallback(() => new SwarmEngine(), []);
@@ -155,7 +157,7 @@ export function App() {
 
   return (
     <>
-      <CanvasStage engine={engine} />
+      <CanvasStage engine={engine} onOpenContact={() => setContactOpen(true)} />
       <canvas ref={canvasRef} className="swarm-canvas" aria-hidden="true" />
       <CornerControls
         soundEnabled={soundEnabled}
@@ -164,6 +166,7 @@ export function App() {
         onBuildAll={handleBuildAll}
         onReplay={handleReplay}
       />
+      <ContactModal isOpen={contactOpen} onClose={() => setContactOpen(false)} />
     </>
   );
 }

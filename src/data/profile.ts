@@ -18,6 +18,8 @@ export const profileData: ProfileData = {
   major: 'Data Science & AI — 25T_KHDL',
   status: 'Available for Software Engineering internships',
   email: 'phat.bd21p0323@gmail.com',
+  web3formsAccessKey:
+    import.meta.env.VITE_WEB3FORMS_KEY ?? '1990d3be-84d2-4037-85ae-3504b4a2426e',
   socials: [
     {
       label: 'GitHub',

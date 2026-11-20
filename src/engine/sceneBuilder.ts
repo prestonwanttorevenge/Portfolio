@@ -876,13 +876,13 @@ export function buildPortfolioScene(getAgentCount: () => number): SceneData {
   addRect('cta-btn', X0, 3088, 176, 48, {
     r: 8,
     fill: PALETTE.ink,
-    href: `mailto:${profileData.email}`,
+    href: '#contact-form',
   });
-  addText('cta-btn-t', X0, 3102, 'Email Me ↗', TEXT_STYLES.btnLight, {
+  addText('cta-btn-t', X0, 3102, 'Send Message', TEXT_STYLES.btnLight, {
     w: 176,
     align: 'center',
     deps: ['r:cta-btn'],
-    href: `mailto:${profileData.email}`,
+    href: '#contact-form',
   });
   addRect('cta-btn-2', X0 + 192, 3088, 156, 48, {
     r: 8,

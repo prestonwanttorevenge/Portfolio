@@ -18,6 +18,7 @@ export interface ProfileData {
   major: string;
   status: string;
   email: string;
+  web3formsAccessKey?: string;
   socials: SocialLink[];
   specLines: { key: string; value: string; comment?: string }[];
 }
